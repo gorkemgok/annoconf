@@ -11,7 +11,7 @@
     <name>AnnoConf</name>
     <description>Annotation Based Configuration for Java</description>
     <modules>
-        <module>annoconfcore</module>
+        <module>annoconf-core</module>
     </modules>
 
     <properties>
