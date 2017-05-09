@@ -1,7 +1,7 @@
-package com.gorkemgok.annoconf.source;
+package com.gorkemgok.annoconf.source.impl;
 
-import com.gorkemgok.annoconf.AbstractConfigurationSource;
-import com.gorkemgok.annoconf.ConfParam;
+import com.gorkemgok.annoconf.annotation.ConfigParam;
+import com.gorkemgok.annoconf.source.AbstractConfigSource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +12,7 @@ import java.util.Properties;
 /**
  * Created by gorkem on 04.04.2017.
  */
-public class PropertyFileSource extends AbstractConfigurationSource {
+public class PropertyFileSource extends AbstractConfigSource {
 
     private final Properties properties;
 
@@ -28,12 +28,12 @@ public class PropertyFileSource extends AbstractConfigurationSource {
     }
 
     @Override
-    public boolean hasValue(ConfParam confParam) {
-        return properties.getProperty(confParam.key()) != null;
+    public boolean hasValue(ConfigParam configParam) {
+        return properties.getProperty(configParam.key()) != null;
     }
 
     @Override
-    public String getString(ConfParam confParam) {
-        return properties.getProperty(confParam.key());
+    public String getString(ConfigParam configParam) {
+        return properties.getProperty(configParam.key());
     }
 }

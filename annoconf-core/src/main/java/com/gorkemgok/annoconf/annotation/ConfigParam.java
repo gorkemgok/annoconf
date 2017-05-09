@@ -1,4 +1,4 @@
-package com.gorkemgok.annoconf;
+package com.gorkemgok.annoconf.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfParam {
+public @interface ConfigParam {
 
     String key();
 

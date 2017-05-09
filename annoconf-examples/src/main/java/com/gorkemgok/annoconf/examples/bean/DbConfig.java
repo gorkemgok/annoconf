@@ -1,13 +1,13 @@
-package com.gorkemgok.annoconf.example;
+package com.gorkemgok.annoconf.examples.bean;
 
-import com.gorkemgok.annoconf.ConfParam;
-import com.gorkemgok.annoconf.Configuration;
+import com.gorkemgok.annoconf.annotation.ConfigParam;
+import com.gorkemgok.annoconf.annotation.ConfigBean;
 
 /**
  * Created by gorkem on 31.03.2017.
  */
-@Configuration
-public class DBConf {
+@ConfigBean
+public class DbConfig {
 
     public final String host;
 
@@ -19,11 +19,11 @@ public class DBConf {
 
     public final String passsword;
 
-    public DBConf(@ConfParam(key="test.conf.host", defaultValue = "localhost") String host,
-                  @ConfParam(key="test.conf.port", defaultValue = "8080") int port,
-                  @ConfParam(key="test.conf.schema") String schema,
-                  @ConfParam(key="test.conf.username") String userName,
-                  @ConfParam(key="test.conf.password") String password) {
+    public DbConfig(@ConfigParam(key="test.conf.host", defaultValue = "localhost") String host,
+                    @ConfigParam(key="test.conf.port", defaultValue = "8080") int port,
+                    @ConfigParam(key="test.conf.schema") String schema,
+                    @ConfigParam(key="test.conf.username") String userName,
+                    @ConfigParam(key="test.conf.password") String password) {
 
         this.host = host;
         this.port = port;
@@ -34,7 +34,7 @@ public class DBConf {
 
     @Override
     public String toString() {
-        return "DBConf{" +
+        return "DbConfig{" +
                 "host='" + host + '\'' +
                 ", port=" + port +
                 ", schema='" + schema + '\'' +

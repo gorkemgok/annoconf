@@ -1,5 +1,8 @@
 package com.gorkemgok.annoconf;
 
+import com.gorkemgok.annoconf.source.ConfigSource;
+import com.gorkemgok.annoconf.source.impl.SystemPropertySource;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,18 +12,20 @@ import java.util.List;
  */
 public class ConfigOptions {
 
-    private List<ConfigurationSource> configurationSourceList;
+    public static final ConfigOptions SYSTEM_PROPERTY = new ConfigOptions().addSource(new SystemPropertySource());
+
+    private List<ConfigSource> configSourceList;
 
     public ConfigOptions() {
-        this.configurationSourceList = new ArrayList<>();
+        this.configSourceList = new ArrayList<>();
     }
 
-    public ConfigOptions addSource(ConfigurationSource configurationSource){
-        configurationSourceList.add(configurationSource);
+    public ConfigOptions addSource(ConfigSource configSource){
+        configSourceList.add(configSource);
         return this;
     }
 
-    public List<ConfigurationSource> getSourceList(){
-        return Collections.unmodifiableList(configurationSourceList);
+    public List<ConfigSource> getSourceList(){
+        return Collections.unmodifiableList(configSourceList);
     }
 }
