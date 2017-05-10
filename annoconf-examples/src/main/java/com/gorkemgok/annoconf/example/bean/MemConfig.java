@@ -1,4 +1,4 @@
-package com.gorkemgok.annoconf.examples.bean;
+package com.gorkemgok.annoconf.example.bean;
 
 import com.gorkemgok.annoconf.annotation.ConfigParam;
 import com.gorkemgok.annoconf.annotation.ConfigBean;
@@ -9,10 +9,10 @@ import com.gorkemgok.annoconf.annotation.ConfigBean;
 @ConfigBean
 public class MemConfig {
 
-    @ConfigParam(key="annoconf.examples.maxmem", defaultValue = "1G")
+    @ConfigParam(key="annoconf.example.maxmem", defaultValue = "1G")
     private String max;
 
-    @ConfigParam(key="annoconf.examples.minmem", defaultValue = "256")
+    @ConfigParam(key="annoconf.example.minmem", defaultValue = "256")
     private int min;
 
     public String getMax() {

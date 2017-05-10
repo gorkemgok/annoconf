@@ -1,4 +1,4 @@
-package com.gorkemgok.annoconf.examples.bean;
+package com.gorkemgok.annoconf.example.bean;
 
 import com.gorkemgok.annoconf.annotation.ConfigParam;
 import com.gorkemgok.annoconf.annotation.ConfigBean;

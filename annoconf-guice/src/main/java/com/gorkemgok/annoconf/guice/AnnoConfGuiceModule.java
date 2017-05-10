@@ -28,15 +28,14 @@ public class AnnoConfGuiceModule extends AbstractModule {
 
         Map<String, Object> configMap = config.getMap();
 
-        //bindConstant().annotatedWith(new InjectConfigImpl("TEST")).to(500);
         configMap.forEach((key, value) -> {
             if (value instanceof String){
-                bindConstant().annotatedWith(new InjectConfigImpl(key)).to((String) value);
+                bind(String.class)
+                        .annotatedWith(new InjectConfigImpl(key)).toProvider(() -> (String)config.getMap().get(key));
             }else if (value instanceof Integer){
-                bindConstant().annotatedWith(new InjectConfigImpl(key)).to((Integer) value);
+                bind(Integer.class)
+                        .annotatedWith(new InjectConfigImpl(key)).toProvider(() -> (Integer)config.getMap().get(key));
             }
         });
-
     }
-
 }

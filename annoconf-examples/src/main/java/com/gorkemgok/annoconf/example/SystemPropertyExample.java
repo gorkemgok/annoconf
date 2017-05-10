@@ -1,10 +1,10 @@
-package com.gorkemgok.annoconf.examples;
+package com.gorkemgok.annoconf.example;
 
 import com.gorkemgok.annoconf.ConfigOptions;
 import com.gorkemgok.annoconf.Config;
 import com.gorkemgok.annoconf.ConfigLoader;
-import com.gorkemgok.annoconf.examples.bean.DbConfig;
-import com.gorkemgok.annoconf.examples.bean.MemConfig;
+import com.gorkemgok.annoconf.example.bean.DbConfig;
+import com.gorkemgok.annoconf.example.bean.MemConfig;
 import com.gorkemgok.annoconf.source.ConfigSource;
 import com.gorkemgok.annoconf.source.impl.PropertyFileSource;
 import com.gorkemgok.annoconf.source.impl.SystemPropertySource;

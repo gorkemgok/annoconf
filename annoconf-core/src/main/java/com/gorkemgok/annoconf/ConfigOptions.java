@@ -16,6 +16,8 @@ public class ConfigOptions {
 
     private List<ConfigSource> configSourceList;
 
+    private String scan;
+
     public ConfigOptions() {
         this.configSourceList = new ArrayList<>();
     }
@@ -23,6 +25,15 @@ public class ConfigOptions {
     public ConfigOptions addSource(ConfigSource configSource){
         configSourceList.add(configSource);
         return this;
+    }
+
+    public ConfigOptions scan(String scan){
+        this.scan = scan;
+        return this;
+    }
+
+    public String getScan() {
+        return scan;
     }
 
     public List<ConfigSource> getSourceList(){

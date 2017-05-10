@@ -30,7 +30,7 @@ public class InjectConfigImpl implements InjectConfig, Serializable {
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return 127 * "value".hashCode() ^ this.value.hashCode();
     }
 
     @Override
