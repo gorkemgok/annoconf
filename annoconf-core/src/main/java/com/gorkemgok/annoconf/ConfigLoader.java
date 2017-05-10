@@ -2,6 +2,7 @@ package com.gorkemgok.annoconf;
 
 import com.gorkemgok.annoconf.annotation.ConfigBean;
 import com.gorkemgok.annoconf.annotation.ConfigParam;
+import com.gorkemgok.annoconf.annotation.ConfigReloadable;
 import com.gorkemgok.annoconf.source.ConfigSource;
 import org.reflections.Reflections;
 
@@ -20,12 +21,15 @@ public class ConfigLoader {
 
     private Map<String, Object> configMap;
 
+    private Map<Field, Object> configReloadableMap;
+
     public ConfigLoader(ConfigOptions configOptions) {
         this.configOptions = configOptions;
     }
 
     public Config load() {
         configMap = new HashMap<>();
+        configReloadableMap = new HashMap<>();
         Map<Class, Object> configPojoSet = new HashMap<>();
         for (Class clazz : findConfigClasses()) {
             System.out.println("ConfigBean found : "+clazz.getName());
@@ -44,25 +48,27 @@ public class ConfigLoader {
         Field[] fields = object.getClass().getDeclaredFields();
         for (Field field : fields){
             ConfigParam configParam = field.getAnnotation(ConfigParam.class);
+            ConfigReloadable configReloadable = field.getAnnotation(ConfigReloadable.class);
             if (configParam != null){
+                if (configReloadable != null) configReloadableMap.put(field, object);
                 if (field.getType().equals(String.class)){
                     String value = getStringFromSourceList(configParam);
-                    field.setAccessible(true);
-                    try {field.set(object, value);} catch (IllegalAccessException e) {e.printStackTrace();}
-                    field.setAccessible(false);
-                    configMap.put(configParam.key(), value);
-                    if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
+                    setField(field, object, configParam, value);
                 }else if (field.getType().getName().equals("int")){
                     Integer value = getIntegerFromSourceList(configParam);
-                    field.setAccessible(true);
-                    try {field.set(object, value);} catch (IllegalAccessException e) {e.printStackTrace();}
-                    field.setAccessible(false);
-                    configMap.put(configParam.key(), value);
-                    if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
+                    setField(field, object, configParam, value);
                 }
             }
         }
         return object;
+    }
+
+    private void setField(Field field, Object object, ConfigParam configParam, Object value){
+        field.setAccessible(true);
+        try {field.set(object, value);} catch (IllegalAccessException e) {e.printStackTrace();}
+        field.setAccessible(false);
+        configMap.put(configParam.key(), value);
+        if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
     }
 
     private Object instantiate(Constructor constructor) throws InstantiationException {
