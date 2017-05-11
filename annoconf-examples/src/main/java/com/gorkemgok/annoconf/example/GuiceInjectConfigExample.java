@@ -4,7 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.gorkemgok.annoconf.example.bean.DbConfig;
-import com.gorkemgok.annoconf.guice.AnnoConfGuiceModule;
+import com.gorkemgok.annoconf.guice.AnnoConfModule;
 import com.gorkemgok.annoconf.ConfigOptions;
 import com.gorkemgok.annoconf.guice.InjectConfig;
 import com.gorkemgok.annoconf.guice.InjectConfigImpl;
@@ -37,8 +37,8 @@ public class GuiceInjectConfigExample {
         boolean hi = new InjectConfigImpl("test.conf.host").equals(injectConfig);
         System.out.println(hi);
 
-        AnnoConfGuiceModule module =
-                new AnnoConfGuiceModule(ConfigOptions.SYSTEM_PROPERTY.scan("com.gorkemgok.annoconf.example.bean"));
+        AnnoConfModule module =
+                new AnnoConfModule(ConfigOptions.withSystemPropertySource().setScanPackage("com.gorkemgok.annoconf.example.bean"));
         Injector injector = Guice.createInjector(module);
 
         TestClass testClass = injector.getInstance(TestClass.class);

@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by gorkem on 04.04.2017.
@@ -41,34 +42,53 @@ public class ConfigLoader {
                 e.printStackTrace();
             }
         }
+        if ( !configReloadableMap.isEmpty() ){
+            startReloadTimer();
+        }
         return new Config(configPojoSet, configMap);
+    }
+
+    private void startReloadTimer(){
+        Timer timer = new Timer("Configuration reload timer", true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                configReloadableMap.forEach((key, value) -> reload(key.getAnnotation(ConfigParam.class).key()));
+            }
+        }, TimeUnit.SECONDS.toMillis(configOptions.getReloadPeriod()), TimeUnit.SECONDS.toMillis(configOptions.getReloadPeriod()));
+    }
+
+    public void reload(String key){
+        configReloadableMap.entrySet().stream()
+                .filter(entry -> entry.getKey().getAnnotation(ConfigParam.class).key().equals(key))
+                .forEach(entry -> setField(entry.getKey(), entry.getValue()));
     }
 
     private Object setFields(Object object) {
         Field[] fields = object.getClass().getDeclaredFields();
         for (Field field : fields){
-            ConfigParam configParam = field.getAnnotation(ConfigParam.class);
-            ConfigReloadable configReloadable = field.getAnnotation(ConfigReloadable.class);
-            if (configParam != null){
-                if (configReloadable != null) configReloadableMap.put(field, object);
-                if (field.getType().equals(String.class)){
-                    String value = getStringFromSourceList(configParam);
-                    setField(field, object, configParam, value);
-                }else if (field.getType().getName().equals("int")){
-                    Integer value = getIntegerFromSourceList(configParam);
-                    setField(field, object, configParam, value);
-                }
-            }
+           setField(field, object);
         }
         return object;
     }
 
-    private void setField(Field field, Object object, ConfigParam configParam, Object value){
-        field.setAccessible(true);
-        try {field.set(object, value);} catch (IllegalAccessException e) {e.printStackTrace();}
-        field.setAccessible(false);
-        configMap.put(configParam.key(), value);
-        if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
+    private void setField(Field field, Object object){
+        ConfigParam configParam = field.getAnnotation(ConfigParam.class);
+        if (configParam != null){
+            ConfigReloadable configReloadable = field.getAnnotation(ConfigReloadable.class);
+            Object value;
+            if (configReloadable != null) configReloadableMap.put(field, object);
+            if (field.getType().getName().equals("int")){
+                value = getIntegerFromSourceList(configParam);
+            }else{
+                value = getStringFromSourceList(configParam);
+            }
+            field.setAccessible(true);
+            try {field.set(object, value);} catch (IllegalAccessException e) {e.printStackTrace();}
+            field.setAccessible(false);
+            configMap.put(configParam.key(), value);
+            if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
+        }
     }
 
     private Object instantiate(Constructor constructor) throws InstantiationException {

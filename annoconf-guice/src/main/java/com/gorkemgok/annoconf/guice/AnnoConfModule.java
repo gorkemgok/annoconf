@@ -10,11 +10,11 @@ import java.util.Map;
 /**
  * Created by gorkem on 09.05.2017.
  */
-public class AnnoConfGuiceModule extends AbstractModule {
+public class AnnoConfModule extends AbstractModule {
 
     private final ConfigOptions configOptions;
 
-    public AnnoConfGuiceModule(ConfigOptions configOptions) {
+    public AnnoConfModule(ConfigOptions configOptions) {
         this.configOptions = configOptions;
     }
 

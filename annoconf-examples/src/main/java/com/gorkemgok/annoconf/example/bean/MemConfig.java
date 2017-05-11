@@ -2,6 +2,7 @@ package com.gorkemgok.annoconf.example.bean;
 
 import com.gorkemgok.annoconf.annotation.ConfigParam;
 import com.gorkemgok.annoconf.annotation.ConfigBean;
+import com.gorkemgok.annoconf.annotation.ConfigReloadable;
 
 /**
  * Created by gorkem on 04.04.2017.
@@ -13,6 +14,7 @@ public class MemConfig {
     private String max;
 
     @ConfigParam(key="annoconf.example.minmem", defaultValue = "256")
+    @ConfigReloadable
     private int min;
 
     public String getMax() {

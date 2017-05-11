@@ -12,11 +12,15 @@ import java.util.List;
  */
 public class ConfigOptions {
 
-    public static final ConfigOptions SYSTEM_PROPERTY = new ConfigOptions().addSource(new SystemPropertySource());
-
     private List<ConfigSource> configSourceList;
 
     private String scan;
+
+    private long reloadPeriod = 60;
+
+    public static ConfigOptions withSystemPropertySource(){
+        return new ConfigOptions().addSource(new SystemPropertySource());
+    }
 
     public ConfigOptions() {
         this.configSourceList = new ArrayList<>();
@@ -27,13 +31,22 @@ public class ConfigOptions {
         return this;
     }
 
-    public ConfigOptions scan(String scan){
+    public ConfigOptions setScanPackage(String scan){
         this.scan = scan;
+        return this;
+    }
+
+    public ConfigOptions setReloadPeriod(long reloadPeriod) {
+        this.reloadPeriod = reloadPeriod;
         return this;
     }
 
     public String getScan() {
         return scan;
+    }
+
+    public long getReloadPeriod() {
+        return reloadPeriod;
     }
 
     public List<ConfigSource> getSourceList(){
