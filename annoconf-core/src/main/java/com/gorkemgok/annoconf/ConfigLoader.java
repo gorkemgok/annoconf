@@ -80,6 +80,8 @@ public class ConfigLoader {
             if (configReloadable != null) configReloadableMap.put(field, object);
             if (field.getType().getName().equals("int")){
                 value = getIntegerFromSourceList(configParam);
+            }else if (field.getType().getName().equals("boolean")){
+                value = getBooleanFromSourceList(configParam);
             }else{
                 value = getStringFromSourceList(configParam);
             }
@@ -97,17 +99,17 @@ public class ConfigLoader {
         for (Parameter constructorParam : constructorParameters) {
             ConfigParam configParam = constructorParam.getAnnotation(ConfigParam.class);
             if (configParam != null) {
-                if (constructorParam.getType().equals(String.class)) {
-                    String value = getStringFromSourceList(configParam);
-                    newParameters.add(value);
-                    configMap.put(configParam.key(), value);
-                    if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
-                } else if (constructorParam.getType().getName().equals("int")) {
-                    Integer value = getIntegerFromSourceList(configParam);
-                    newParameters.add(value);
-                    configMap.put(configParam.key(), value);
-                    if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
+                Object value;
+                if (constructorParam.getType().getName().equals("int")) {
+                    value = getIntegerFromSourceList(configParam);
+                }else if (constructorParam.getType().getName().equals("boolean")) {
+                    value = getBooleanFromSourceList(configParam);
+                }else {
+                    value = getStringFromSourceList(configParam);
                 }
+                newParameters.add(value);
+                configMap.put(configParam.key(), value);
+                if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
             }else{
                 throw new InstantiationException("All constructor parameters must have ConfigParam annotation");
             }
@@ -135,12 +137,11 @@ public class ConfigLoader {
     }
 
     private int getIntegerFromSourceList(ConfigParam configParam){
-        for (ConfigSource configSource : configOptions.getSourceList()){
-            if (configSource.hasValue(configParam)){
-                return configSource.getInt(configParam);
-            }
-        }
-        return Integer.valueOf(configParam.defaultValue());
+        return Integer.valueOf(getStringFromSourceList(configParam));
+    }
+
+    private boolean getBooleanFromSourceList(ConfigParam configParam){
+        return Boolean.valueOf(getStringFromSourceList(configParam));
     }
 
     public Set<Class<?>> findConfigClasses(){
