@@ -35,6 +35,18 @@ public class AnnoConfModule extends AbstractModule {
             }else if (value instanceof Integer){
                 bind(Integer.class)
                         .annotatedWith(new InjectConfigImpl(key)).toProvider(() -> (Integer)config.getMap().get(key));
+            }else if (value instanceof Long){
+                bind(Long.class)
+                        .annotatedWith(new InjectConfigImpl(key)).toProvider(() -> (Long)config.getMap().get(key));
+            }else if (value instanceof Boolean){
+                bind(Boolean.class)
+                        .annotatedWith(new InjectConfigImpl(key)).toProvider(() -> (Boolean) config.getMap().get(key));
+            }else if (value instanceof Short){
+                bind(Short.class)
+                        .annotatedWith(new InjectConfigImpl(key)).toProvider(() -> (Short) config.getMap().get(key));
+            }else if (value instanceof Byte){
+                bind(Byte.class)
+                        .annotatedWith(new InjectConfigImpl(key)).toProvider(() -> (Byte) config.getMap().get(key));
             }
         });
     }

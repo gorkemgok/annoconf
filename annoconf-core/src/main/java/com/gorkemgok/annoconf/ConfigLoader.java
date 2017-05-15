@@ -82,6 +82,12 @@ public class ConfigLoader {
                 value = getIntegerFromSourceList(configParam);
             }else if (field.getType().getName().equals("boolean")){
                 value = getBooleanFromSourceList(configParam);
+            }else if (field.getType().getName().equals("long")){
+                value = getLongFromSourceList(configParam);
+            }else if (field.getType().getName().equals("short")){
+                value = getShortFromSourceList(configParam);
+            }else if (field.getType().getName().equals("byte")){
+                value = getByteFromSourceList(configParam);
             }else{
                 value = getStringFromSourceList(configParam);
             }
@@ -104,6 +110,12 @@ public class ConfigLoader {
                     value = getIntegerFromSourceList(configParam);
                 }else if (constructorParam.getType().getName().equals("boolean")) {
                     value = getBooleanFromSourceList(configParam);
+                }else if (constructorParam.getType().getName().equals("long")) {
+                    value = getLongFromSourceList(configParam);
+                }else if (constructorParam.getType().getName().equals("short")) {
+                    value = getShortFromSourceList(configParam);
+                }else if (constructorParam.getType().getName().equals("byte")) {
+                    value = getByteFromSourceList(configParam);
                 }else {
                     value = getStringFromSourceList(configParam);
                 }
@@ -138,6 +150,18 @@ public class ConfigLoader {
 
     private int getIntegerFromSourceList(ConfigParam configParam){
         return Integer.valueOf(getStringFromSourceList(configParam));
+    }
+
+    private long getLongFromSourceList(ConfigParam configParam){
+        return Long.valueOf(getStringFromSourceList(configParam));
+    }
+
+    private short getShortFromSourceList(ConfigParam configParam){
+        return Short.valueOf(getStringFromSourceList(configParam));
+    }
+
+    private byte getByteFromSourceList(ConfigParam configParam){
+        return Byte.valueOf(getStringFromSourceList(configParam));
     }
 
     private boolean getBooleanFromSourceList(ConfigParam configParam){
