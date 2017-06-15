@@ -1,8 +1,6 @@
 package com.gorkemgok.annoconf;
 
-import com.gorkemgok.annoconf.annotation.ConfigBean;
-import com.gorkemgok.annoconf.annotation.ConfigParam;
-import com.gorkemgok.annoconf.annotation.ConfigReloadable;
+import com.gorkemgok.annoconf.annotation.*;
 import com.gorkemgok.annoconf.source.ConfigSource;
 import org.reflections.Reflections;
 
@@ -45,7 +43,29 @@ public class ConfigLoader {
         if ( !configReloadableMap.isEmpty() ){
             startReloadTimer();
         }
-        return new Config(configPojoSet, configMap);
+        Set<Class<?>> serviceClasses = findServiceClasses();
+        List<Service> services = new ArrayList<>(serviceClasses.size());
+        serviceClasses.forEach(clazz -> {
+            try {
+                LoadService loadService = clazz.getAnnotation(LoadService.class);
+                String key = loadService.ifConfig();
+                String value = loadService.equalsTo();
+                if ((key.isEmpty() && value.isEmpty())
+                        || getStringFromSourceList(ConfigParams.getWithKey(key)).equals(value)){
+                    Object serviceInstance = clazz.getConstructor(null).newInstance();
+                    services.add(new Service(serviceInstance, loadService.value(), loadService.description()));
+                }
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        });
+        return new Config(configPojoSet, configMap, services);
     }
 
     private void startReloadTimer(){
@@ -179,6 +199,20 @@ public class ConfigLoader {
 
         System.out.println("Scanning configurations...");
         Set<Class<?>> clazzSet = reflections.getTypesAnnotatedWith(ConfigBean.class);
+        return clazzSet;
+    }
+
+    public Set<Class<?>> findServiceClasses(){
+
+        Reflections reflections;
+        if (configOptions.getScan() != null){
+            reflections = new Reflections(configOptions.getScan());
+        }else{
+            reflections = new Reflections();
+        }
+
+        System.out.println("Scanning services...");
+        Set<Class<?>> clazzSet = reflections.getTypesAnnotatedWith(LoadService.class);
         return clazzSet;
     }
 }
