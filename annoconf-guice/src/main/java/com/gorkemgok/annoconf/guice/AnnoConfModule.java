@@ -13,14 +13,19 @@ import java.util.Map;
 public class AnnoConfModule extends AbstractModule {
 
     private final ConfigOptions configOptions;
+    private final Config config;
 
     public AnnoConfModule(ConfigOptions configOptions) {
         this.configOptions = configOptions;
+        this.config = new ConfigLoader(configOptions).load();
+    }
+
+    public Config unwrapConfig(){
+        return config;
     }
 
     @Override
     protected void configure() {
-        Config config = new ConfigLoader(configOptions).load();
         Map<Class, Object> configPojoMap = config.getAll();
         bind(Config.class).toInstance(config);
 

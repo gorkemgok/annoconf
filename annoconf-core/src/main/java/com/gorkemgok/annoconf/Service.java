@@ -5,32 +5,36 @@ package com.gorkemgok.annoconf;
  */
 public class Service {
 
-    private final Object intance;
+    private final Object instance;
 
     private final String name;
 
-    private final String decription;
+    private final String description;
 
-    public Service(Object intance, String name, String decription) {
-        this.intance = intance;
+    public Service(Object intsance, String name, String description) {
+        this.instance = intsance;
         this.name = name;
-        this.decription = decription;
+        this.description = description;
     }
 
-    public Object getIntance() {
-        return intance;
+    public Object getInstance() {
+        return instance;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getDecription() {
-        return decription;
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isLoadable(){
+        return instance != null;
     }
 
     @Override
     public String toString() {
-        return String.format("Service : %s (%s)", name, decription);
+        return String.format("Service : %s (%s)", name, description);
     }
 }

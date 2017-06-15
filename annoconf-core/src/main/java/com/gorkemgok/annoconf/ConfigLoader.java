@@ -50,11 +50,12 @@ public class ConfigLoader {
                 LoadService loadService = clazz.getAnnotation(LoadService.class);
                 String key = loadService.ifConfig();
                 String value = loadService.equalsTo();
+                Object serviceInstance = null;
                 if ((key.isEmpty() && value.isEmpty())
                         || getStringFromSourceList(ConfigParams.getWithKey(key)).equals(value)){
-                    Object serviceInstance = clazz.getConstructor(null).newInstance();
-                    services.add(new Service(serviceInstance, loadService.value(), loadService.description()));
+                    serviceInstance = clazz.getConstructor(null).newInstance();
                 }
+                services.add(new Service(serviceInstance, loadService.value(), loadService.description()));
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
