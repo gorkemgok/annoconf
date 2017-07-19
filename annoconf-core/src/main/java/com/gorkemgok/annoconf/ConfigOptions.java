@@ -3,18 +3,16 @@ package com.gorkemgok.annoconf;
 import com.gorkemgok.annoconf.source.ConfigSource;
 import com.gorkemgok.annoconf.source.impl.SystemPropertySource;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by gorkem on 04.04.2017.
  */
 public class ConfigOptions {
 
-    private List<ConfigSource> configSourceList;
+    private Set<ConfigSource> configSourceList;
 
-    private String scan;
+    private Set<String> scanPackages;
 
     private long reloadPeriod = 60;
 
@@ -23,7 +21,8 @@ public class ConfigOptions {
     }
 
     public ConfigOptions() {
-        this.configSourceList = new ArrayList<>();
+        this.configSourceList = new HashSet<>();
+        this.scanPackages = new HashSet<>();
     }
 
     public ConfigOptions addSource(ConfigSource configSource){
@@ -31,8 +30,13 @@ public class ConfigOptions {
         return this;
     }
 
-    public ConfigOptions setScanPackage(String scan){
-        this.scan = scan;
+    public ConfigOptions addScanPackage(String scanPackage){
+        scanPackages.add(scanPackage);
+        return this;
+    }
+
+    public ConfigOptions addScanPackages(Collection<String> scanPackages){
+        this.scanPackages.addAll(scanPackages);
         return this;
     }
 
@@ -41,15 +45,15 @@ public class ConfigOptions {
         return this;
     }
 
-    public String getScan() {
-        return scan;
+    public Collection<String> getScanPackages() {
+        return Collections.unmodifiableSet(scanPackages);
     }
 
     public long getReloadPeriod() {
         return reloadPeriod;
     }
 
-    public List<ConfigSource> getSourceList(){
-        return Collections.unmodifiableList(configSourceList);
+    public Collection<ConfigSource> getSourceList(){
+        return Collections.unmodifiableSet(configSourceList);
     }
 }

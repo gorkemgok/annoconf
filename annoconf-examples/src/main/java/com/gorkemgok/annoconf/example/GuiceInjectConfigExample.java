@@ -38,7 +38,7 @@ public class GuiceInjectConfigExample {
         System.out.println(hi);
 
         AnnoConfModule module =
-                new AnnoConfModule(ConfigOptions.withSystemPropertySource().setScanPackage("com.gorkemgok.annoconf.example.bean"));
+                new AnnoConfModule(ConfigOptions.withSystemPropertySource().addScanPackage("com.gorkemgok.annoconf.example.bean"));
         Injector injector = Guice.createInjector(module);
 
         TestClass testClass = injector.getInstance(TestClass.class);

@@ -3,7 +3,10 @@ package com.gorkemgok.annoconf;
 import com.gorkemgok.annoconf.annotation.*;
 import com.gorkemgok.annoconf.source.ConfigSource;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +18,8 @@ import java.util.concurrent.TimeUnit;
  * Created by gorkem on 04.04.2017.
  */
 public class ConfigLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigLoader.class);
 
     private final ConfigOptions configOptions;
 
@@ -190,30 +195,36 @@ public class ConfigLoader {
     }
 
     public Set<Class<?>> findConfigClasses(){
-
-        Reflections reflections;
-        if (configOptions.getScan() != null){
-            reflections = new Reflections(configOptions.getScan());
-        }else{
-            reflections = new Reflections();
-        }
-
-        System.out.println("Scanning configurations...");
-        Set<Class<?>> clazzSet = reflections.getTypesAnnotatedWith(ConfigBean.class);
-        return clazzSet;
+        return findAnnotatedClasses(ConfigBean.class);
     }
 
     public Set<Class<?>> findServiceClasses(){
+        return findAnnotatedClasses(LoadService.class);
+    }
 
-        Reflections reflections;
-        if (configOptions.getScan() != null){
-            reflections = new Reflections(configOptions.getScan());
+    public Set<Class<?>> findAnnotatedClasses(Class<? extends Annotation> annotationClass){
+        Set<Class<?>> clazzSet = new HashSet<>();
+        Collection<String> scanPackages = configOptions.getScanPackages();
+        if (!scanPackages.isEmpty()){
+            for (String scanPackage : scanPackages){
+                clazzSet.addAll(findAnnotatedClasses(annotationClass, scanPackage));
+            }
         }else{
-            reflections = new Reflections();
+            clazzSet.addAll(findAnnotatedClasses(annotationClass, null));
         }
-
-        System.out.println("Scanning services...");
-        Set<Class<?>> clazzSet = reflections.getTypesAnnotatedWith(LoadService.class);
         return clazzSet;
     }
+
+    public Set<Class<?>> findAnnotatedClasses(Class<? extends Annotation> annotationClass, String scanPackage){
+        Reflections reflections;
+        if (scanPackage == null || scanPackage.isEmpty()){
+            reflections = new Reflections();
+        }else{
+            reflections = new Reflections(scanPackage);
+        }
+        LOGGER.info("Scanning configurations in {}", scanPackage);
+        return reflections.getTypesAnnotatedWith(annotationClass);
+    }
+
+
 }
