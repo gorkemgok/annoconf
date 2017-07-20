@@ -3,6 +3,7 @@ package com.gorkemgok.annoconf;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by gorkem on 09.05.2017.
@@ -13,9 +14,9 @@ public class Config {
 
     private final Map<String, Object> configMap;
 
-    private final List<Service> services;
+    private final Set<Service> services;
 
-    public Config(Map<Class, Object> configPojoSet, Map<String, Object> configMap, List<Service> services) {
+    public Config(Map<Class, Object> configPojoSet, Map<String, Object> configMap, Set<Service> services) {
         this.configPojoSet = configPojoSet;
         this.configMap = configMap;
         this.services = services;
@@ -33,7 +34,7 @@ public class Config {
         return Collections.unmodifiableMap(configMap);
     }
 
-    public List<Service> getServices() {
-        return Collections.unmodifiableList(services);
+    public Set<Service> getServices() {
+        return Collections.unmodifiableSet(services);
     }
 }

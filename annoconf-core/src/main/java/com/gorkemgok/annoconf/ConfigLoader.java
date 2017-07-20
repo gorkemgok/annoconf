@@ -49,7 +49,7 @@ public class ConfigLoader {
             startReloadTimer();
         }
         Set<Class<?>> serviceClasses = findServiceClasses();
-        List<Service> services = new ArrayList<>(serviceClasses.size());
+        Set<Service> services = new HashSet<>(serviceClasses.size());
         serviceClasses.forEach(clazz -> {
             try {
                 LoadService loadService = clazz.getAnnotation(LoadService.class);
