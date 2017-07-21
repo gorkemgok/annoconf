@@ -12,7 +12,17 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface LoadService {
 
+    boolean autoLoad() default false;
+
     String value() default "";
+
+    String name() default "";
+
+    String[] dependingModules() default {};
+
+    String[] implementationOf() default {};
+
+    int order() default 50;
 
     String description() default "";
 

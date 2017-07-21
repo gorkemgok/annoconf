@@ -60,7 +60,7 @@ public class ConfigLoader {
                         || getStringFromSourceList(ConfigParams.getWithKey(key)).equals(value)){
                     serviceInstance = clazz.getConstructor(null).newInstance();
                 }
-                services.add(new Service(serviceInstance, loadService.value(), loadService.description()));
+                services.add(new Service(serviceInstance, loadService.name(), loadService.description()));
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
