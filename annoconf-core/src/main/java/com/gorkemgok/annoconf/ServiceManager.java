@@ -33,7 +33,7 @@ public class ServiceManager {
 
     private void fillServiceSet(Service service, List<Service> cycleList, Set<Service> resultServiceSet) throws CrossDependencyException{
         if (cycleList.contains(service)){
-            throw new CrossDependencyException(service, cycleList);
+            //throw new CrossDependencyException(service, cycleList);
         }
         cycleList.add(service);
         resultServiceSet.add(service);
