@@ -14,8 +14,8 @@ public class ServiceManager {
 
     private final Set<Service> services;
 
-    public ServiceManager(Set<Service> services) {
-        this.services = services;
+    public ServiceManager(Config config) {
+        this.services = config.getServices();
     }
 
     public Set<Service> getServiceSet() throws CrossDependencyException {

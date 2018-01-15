@@ -27,9 +27,7 @@ public class ServiceManagerTest {
 
     @Test
     public void testOne() throws Exception {
-        ServiceManager serviceManagerOne = new ServiceManager(
-                configOne.getServices()
-        );
+        ServiceManager serviceManagerOne = new ServiceManager(configOne);
 
         Set<Service> serviceSetOne = serviceManagerOne.getServiceSet();
         Assert.assertEquals(5, serviceSetOne.size());
