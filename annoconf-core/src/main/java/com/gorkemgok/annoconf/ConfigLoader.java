@@ -104,19 +104,7 @@ public class ConfigLoader {
             ConfigReloadable configReloadable = field.getAnnotation(ConfigReloadable.class);
             Object value;
             if (configReloadable != null) configReloadableMap.put(field, object);
-            if (field.getType().getName().equals("int")){
-                value = getIntegerFromSourceList(configParam);
-            }else if (field.getType().getName().equals("boolean")){
-                value = getBooleanFromSourceList(configParam);
-            }else if (field.getType().getName().equals("long")){
-                value = getLongFromSourceList(configParam);
-            }else if (field.getType().getName().equals("short")){
-                value = getShortFromSourceList(configParam);
-            }else if (field.getType().getName().equals("byte")){
-                value = getByteFromSourceList(configParam);
-            }else{
-                value = getStringFromSourceList(configParam);
-            }
+            value = getConfigValue(configParam, field.getType().getName());
             field.setAccessible(true);
             try {field.set(object, value);} catch (IllegalAccessException e) {e.printStackTrace();}
             field.setAccessible(false);
@@ -125,26 +113,31 @@ public class ConfigLoader {
         }
     }
 
+    private Object getConfigValue(ConfigParam configParam, String name) {
+        Object value;
+        if (name.equals("int")) {
+            value = getIntegerFromSourceList(configParam);
+        } else if (name.equals("boolean")) {
+            value = getBooleanFromSourceList(configParam);
+        } else if (name.equals("long")) {
+            value = getLongFromSourceList(configParam);
+        } else if (name.equals("short")) {
+            value = getShortFromSourceList(configParam);
+        } else if (name.equals("byte")) {
+            value = getByteFromSourceList(configParam);
+        } else {
+            value = getStringFromSourceList(configParam);
+        }
+        return value;
+    }
+
     private Object instantiate(Constructor constructor) throws InstantiationException {
         List<Object> newParameters = new ArrayList<>();
         Parameter[] constructorParameters = constructor.getParameters();
         for (Parameter constructorParam : constructorParameters) {
             ConfigParam configParam = constructorParam.getAnnotation(ConfigParam.class);
             if (configParam != null) {
-                Object value;
-                if (constructorParam.getType().getName().equals("int")) {
-                    value = getIntegerFromSourceList(configParam);
-                }else if (constructorParam.getType().getName().equals("boolean")) {
-                    value = getBooleanFromSourceList(configParam);
-                }else if (constructorParam.getType().getName().equals("long")) {
-                    value = getLongFromSourceList(configParam);
-                }else if (constructorParam.getType().getName().equals("short")) {
-                    value = getShortFromSourceList(configParam);
-                }else if (constructorParam.getType().getName().equals("byte")) {
-                    value = getByteFromSourceList(configParam);
-                }else {
-                    value = getStringFromSourceList(configParam);
-                }
+                Object value = getConfigValue(configParam, constructorParam.getType().getName());
                 newParameters.add(value);
                 configMap.put(configParam.key(), value);
                 if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
