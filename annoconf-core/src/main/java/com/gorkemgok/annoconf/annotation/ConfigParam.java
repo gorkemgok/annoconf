@@ -13,9 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigParam {
 
-    String key();
-
-    String env() default "";
+    String[] keys();
 
     String defaultValue() default "";
 

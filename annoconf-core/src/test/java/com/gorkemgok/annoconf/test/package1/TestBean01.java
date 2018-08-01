@@ -14,8 +14,8 @@ public class TestBean01 {
     public final String prop2;
 
     public TestBean01(
-            @ConfigParam(key = "test.prop1") String prop1,
-            @ConfigParam(key = "test.prop2") String prop2) {
+            @ConfigParam(keys = "test.prop1") String prop1,
+            @ConfigParam(keys = "test.prop2") String prop2) {
         this.prop1 = prop1;
         this.prop2 = prop2;
     }

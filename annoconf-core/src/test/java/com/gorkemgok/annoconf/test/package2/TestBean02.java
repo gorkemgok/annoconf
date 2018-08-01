@@ -12,7 +12,7 @@ public class TestBean02 {
     public final String prop3;
 
     public TestBean02(
-            @ConfigParam(key = "test.prop1") String prop3) {
+            @ConfigParam(keys = "test.prop1") String prop3) {
         this.prop3 = prop3;
     }
 }

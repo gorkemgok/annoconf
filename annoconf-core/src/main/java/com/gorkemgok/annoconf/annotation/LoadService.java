@@ -26,7 +26,7 @@ public @interface LoadService {
 
     String description() default "";
 
-    String ifConfig() default "";
+    String[] ifConfig() default {};
 
     String equalsTo() default "";
 }

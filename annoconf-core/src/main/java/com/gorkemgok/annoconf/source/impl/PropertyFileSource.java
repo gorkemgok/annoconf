@@ -7,7 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 /**
  * Created by gorkem on 04.04.2017.
@@ -28,12 +31,10 @@ public class PropertyFileSource extends AbstractConfigSource {
     }
 
     @Override
-    public boolean hasValue(ConfigParam configParam) {
-        return properties.getProperty(configParam.key()) != null;
-    }
-
-    @Override
-    public String getString(ConfigParam configParam) {
-        return properties.getProperty(configParam.key());
+    public Optional<String> getString(String[] keys) {
+        return Stream.of(keys)
+                .map(properties::getProperty)
+                .filter(Objects::nonNull)
+                .findFirst();
     }
 }

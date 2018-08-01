@@ -10,10 +10,10 @@ import com.gorkemgok.annoconf.annotation.ConfigReloadable;
 @ConfigBean
 public class MemConfig {
 
-    @ConfigParam(key="annoconf.example.maxmem", defaultValue = "1G")
+    @ConfigParam(keys ="annoconf.example.maxmem", defaultValue = "1G")
     private String max;
 
-    @ConfigParam(key="annoconf.example.minmem", defaultValue = "256")
+    @ConfigParam(keys ="annoconf.example.minmem", defaultValue = "256")
     @ConfigReloadable
     private int min;
 

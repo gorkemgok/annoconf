@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * Created by gorkem on 04.04.2017.
@@ -25,6 +26,8 @@ public class ConfigLoader {
 
     private Map<String, Object> configMap;
 
+    private Map<String, String> defaultsMap;
+
     private Map<Field, Object> configReloadableMap;
 
     public ConfigLoader(ConfigOptions configOptions) {
@@ -34,6 +37,7 @@ public class ConfigLoader {
     public Config load() {
         configMap = new HashMap<>();
         configReloadableMap = new HashMap<>();
+        defaultsMap = new HashMap<>(configOptions.getDefaultsMap());
         Map<Class, Object> configPojoSet = new HashMap<>();
         for (Class clazz : findConfigClasses()) {
             System.out.println("ConfigBean found : "+clazz.getName());
@@ -53,11 +57,14 @@ public class ConfigLoader {
         serviceClasses.forEach(clazz -> {
             try {
                 LoadService loadService = clazz.getAnnotation(LoadService.class);
-                String key = loadService.ifConfig();
+                String[] keys = loadService.ifConfig();
                 String value = loadService.equalsTo();
                 Object serviceInstance = null;
-                if ((key.isEmpty() && value.isEmpty())
-                        || getStringFromSourceList(ConfigParams.getWithKey(key)).equals(value)){
+                boolean load = Stream.of(keys)
+                        .map(key -> ConfigParams.getWithKey(key, defaultsMap.get(key)))
+                        .map(this::getStringFromSourceList)
+                        .anyMatch(value::equals);
+                if (load || (keys.length == 0 && value.isEmpty())){
                     serviceInstance = clazz.getConstructor(null).newInstance();
                 }
                 services.add(new Service(serviceInstance, loadService.name(), loadService.description()));
@@ -79,15 +86,10 @@ public class ConfigLoader {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                configReloadableMap.forEach((key, value) -> reload(key.getAnnotation(ConfigParam.class).key()));
+                configReloadableMap.entrySet().stream()
+                        .forEach(entry -> setField(entry.getKey(), entry.getValue()));
             }
         }, TimeUnit.SECONDS.toMillis(configOptions.getReloadPeriod()), TimeUnit.SECONDS.toMillis(configOptions.getReloadPeriod()));
-    }
-
-    public void reload(String key){
-        configReloadableMap.entrySet().stream()
-                .filter(entry -> entry.getKey().getAnnotation(ConfigParam.class).key().equals(key))
-                .forEach(entry -> setField(entry.getKey(), entry.getValue()));
     }
 
     private Object setFields(Object object) {
@@ -103,13 +105,17 @@ public class ConfigLoader {
         if (configParam != null){
             ConfigReloadable configReloadable = field.getAnnotation(ConfigReloadable.class);
             Object value;
+            String defaultValue = configParam.defaultValue();
             if (configReloadable != null) configReloadableMap.put(field, object);
             value = getConfigValue(configParam, field.getType().getName());
             field.setAccessible(true);
             try {field.set(object, value);} catch (IllegalAccessException e) {e.printStackTrace();}
             field.setAccessible(false);
-            configMap.put(configParam.key(), value);
-            if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
+            Stream.of(configParam.keys())
+                    .forEach(key -> {
+                        configMap.put(key, value);
+                        defaultsMap.put(key, defaultValue);
+                    });
         }
     }
 
@@ -138,9 +144,13 @@ public class ConfigLoader {
             ConfigParam configParam = constructorParam.getAnnotation(ConfigParam.class);
             if (configParam != null) {
                 Object value = getConfigValue(configParam, constructorParam.getType().getName());
+                String defaultValue = configParam.defaultValue();
                 newParameters.add(value);
-                configMap.put(configParam.key(), value);
-                if ( !configParam.env().isEmpty() ) configMap.put(configParam.env(), value);
+                Stream.of(configParam.keys())
+                        .forEach(key -> {
+                            configMap.put(key, value);
+                            defaultsMap.put(key, defaultValue);
+                        });
             }else{
                 throw new InstantiationException("All constructor parameters must have ConfigParam annotation");
             }
@@ -159,12 +169,12 @@ public class ConfigLoader {
     }
 
     private String getStringFromSourceList(ConfigParam configParam){
-        for (ConfigSource configSource : configOptions.getSourceList()){
-            if (configSource.hasValue(configParam)){
-                return configSource.getString(configParam);
-            }
-        }
-        return configParam.defaultValue();
+        return configOptions.getSourceList().stream().
+                map(configSource -> configSource.getString(configParam))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElse(configParam.defaultValue());
     }
 
     private int getIntegerFromSourceList(ConfigParam configParam){

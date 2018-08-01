@@ -6,27 +6,22 @@ import java.lang.annotation.Annotation;
  * Created by gorkem on 15.06.2017.
  */
 public class ConfigParamImpl implements ConfigParam{
-    private final String key;
-    private final String env;
+    private final String[] keys;
+    private final String defaultValue;
 
-    public ConfigParamImpl(String key, String env) {
-        this.key = key;
-        this.env = env;
+    public ConfigParamImpl(String[] keys, String defaultValue) {
+        this.keys = keys;
+        this.defaultValue = defaultValue;
     }
 
     @Override
-    public String key() {
-        return key;
-    }
-
-    @Override
-    public String env() {
-        return env;
+    public String[] keys() {
+        return keys;
     }
 
     @Override
     public String defaultValue() {
-        return "";
+        return defaultValue;
     }
 
     @Override

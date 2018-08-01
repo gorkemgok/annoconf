@@ -14,6 +14,8 @@ public class ConfigOptions {
 
     private Set<String> scanPackages;
 
+    private Map<String, String> defaultsMap;
+
     private long reloadPeriod = 60;
 
     public static ConfigOptions withSystemPropertySource(){
@@ -23,6 +25,17 @@ public class ConfigOptions {
     public ConfigOptions() {
         this.configSourceList = new HashSet<>();
         this.scanPackages = new HashSet<>();
+        this.defaultsMap = new HashMap<>();
+    }
+
+    public ConfigOptions addDefault(String key, String defaultValue) {
+        this.defaultsMap.put(key, defaultValue);
+        return this;
+    }
+
+    public ConfigOptions addDefaults(Map<String, String> defaultsMap) {
+        this.defaultsMap.putAll(defaultsMap);
+        return this;
     }
 
     public ConfigOptions addSource(ConfigSource configSource){
@@ -55,5 +68,9 @@ public class ConfigOptions {
 
     public Collection<ConfigSource> getSourceList(){
         return Collections.unmodifiableSet(configSourceList);
+    }
+
+    public Map<String, String> getDefaultsMap() {
+        return Collections.unmodifiableMap(defaultsMap);
     }
 }
